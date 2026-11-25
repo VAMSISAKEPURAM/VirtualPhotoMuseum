@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Virtual Photo Museum</title>
+  <meta name="description" content="Upload your photos, pick your group, and walk through a personalized 3D museum gallery.">
+  <meta name="theme-color" content="#0f0d0b">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============ 4-STEP SETUP WIZARD ============ -->
+  <main id="uploadScreen" class="screen upload">
+    <header class="hero">
+      <p class="eyebrow">Your photos &middot; Your group &middot; Your gallery</p>
+      <h1>Virtual Photo Museum</h1>
+      <p class="lede">Upload your pictures, choose who is visiting, and step inside a personalized 3D gallery.</p>
+    </header>
+
+    <nav class="stepper" aria-label="Setup steps">
+      <button type="button" class="step-pill active" data-step="1"><span>1</span> Photos</button>
+      <button type="button" class="step-pill" data-step="2"><span>2</span> Relationship</button>
+      <button type="button" class="step-pill" data-step="3"><span>3</span> Characters</button>
+      <button type="button" class="step-pill" data-step="4"><span>4</span> Review</button>
+    </nav>
+
+    <section class="panel">
+      <!-- STEP 1: UPLOAD PHOTOS -->
+      <div id="step1" class="wizard-step">
+        <div id="dropzone" class="dropzone" role="button" tabindex="0"
+             aria-label="Add photos. Drag and drop images here, or press Enter to browse your device">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-9 9"/>
+          </svg>
+          <strong>Drag &amp; drop photos here</strong>
+          <span>or <u>browse your device</u> &middot; JPG, PNG, WebP, GIF, AVIF, BMP</span>
+        </div>
+        <input id="fileInput" type="file" accept="image/*" multiple hidden>
+
+        <div id="processing" class="processing" hidden>
+          <div class="bar"><i id="processingBar"></i></div>
+          <span id="processingText" aria-live="polite"></span>
+        </div>
+
+        <div class="grid-head">
+          <h2 id="countLabel">No photos yet</h2>
+          <button id="clearAll" type="button" class="link-btn" hidden>Remove all</button>
+        </div>
+        <ul id="grid" class="grid" aria-label="Uploaded photos"></ul>
+      </div>
+
+      <!-- STEP 2: RELATIONSHIP, OCCASION & MUSIC -->
+      <div id="step2" class="wizard-step" hidden>
+        <h2 class="step-title">Who is visiting the museum?</h2>
+        <p class="step-sub">Your choice shapes the gallery architecture, frames, decor, and soundtrack.</p>
+        <div id="relCards" class="rel-grid" role="radiogroup" aria-label="Relationship theme"></div>
+
+        <div class="sub-section">
+          <h3 class="sub-title">Celebration or Occasion</h3>
+          <div id="occasionBtns" class="type-btns" role="radiogroup" aria-label="Occasion"></div>
+          <input id="customOccasionInput" type="text" class="custom-occ-input" maxlength="44"
+                 placeholder="Enter your custom banner title (e.g. Happy 5th Anniversary!)" hidden>
+        </div>
+
+        <div class="sub-section">
+          <h3 class="sub-title">Music</h3>
+          <div class="music-upload-row">
+            <button id="addMusicBtn" type="button" class="secondary">+ Add your own music (MP3, WAV, OGG)</button>
+            <input id="musicInput" type="file" accept="audio/*" multiple hidden>
+            <span id="musicStatus" class="music-status">Using built-in theme soundtrack</span>
+          </div>
+          <ul id="musicList" class="music-list"></ul>
+        </div>
+
+        <div class="advanced-row">
+          <label class="theme-pick">Gallery style override
+            <select id="styleOverride">
+              <option value="theme">Use Relationship Theme (Recommended)</option>
+              <option value="classic">Classic Gallery</option>
+              <option value="modern">Modern Minimal</option>
+              <option value="dark">Dark Spotlight</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <!-- STEP 3: CHARACTERS -->
+      <div id="step3" class="wizard-step" hidden>
+        <div class="char-header">
+          <div>
+            <h2 class="step-title">Customize your visitors</h2>
+            <p id="charRuleNote" class="step-sub"></p>
+          </div>
+          <div class="count-picker" aria-label="Number of characters">
+            <span>Visitors:</span>
+            <div id="charCountBtns" class="count-btns"></div>
+          </div>
+        </div>
+
+        <div id="charTabs" class="char-tabs" role="tablist" aria-label="Select character to edit"></div>
+
+        <div class="char-editor">
+          <div class="char-form">
+            <label class="field">
+              <span>Name</span>
+              <input id="charName" type="text" maxlength="20" placeholder="Enter name">
+            </label>
+            <div class="field">
+              <span>Type</span>
+              <div id="charTypeBtns" class="type-btns"></div>
+            </div>
+            <div class="field">
+              <span>Outfit style</span>
+              <div id="charOutfitBtns" class="type-btns"></div>
+            </div>
+            <div class="color-group">
+              <div class="field">
+                <span>Shirt color</span>
+                <div class="swatch-row" id="shirtSwatches"></div>
+                <input id="shirtColor" type="color" aria-label="Custom shirt color">
+              </div>
+              <div class="field">
+                <span>Hair color</span>
+                <div class="swatch-row" id="hairSwatches"></div>
+                <input id="hairColor" type="color" aria-label="Custom hair color">
+              </div>
+              <div class="field">
+                <span>Skin tone</span>
+                <div class="swatch-row" id="skinSwatches"></div>
+                <input id="skinColor" type="color" aria-label="Custom skin tone">
+              </div>
+            </div>
+          </div>
+          <div class="preview-box">
+            <canvas id="previewCanvas" aria-label="Live 3D character preview"></canvas>
+            <span id="previewLabel" class="preview-label"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: REVIEW & GENERATE -->
+      <div id="step4" class="wizard-step" hidden>
+        <h2 class="step-title">Ready to open your gallery</h2>
+        <p class="step-sub">Review your museum setup below, or go back to make changes.</p>
+        <div id="reviewSummary" class="review-grid"></div>
+      </div>
+
+      <!-- WIZARD NAVIGATION -->
+      <div class="wizard-nav">
+        <button id="wizBack" type="button" class="secondary" hidden>&larr; Back</button>
+        <div class="nav-spacer"></div>
+        <button id="wizNext" type="button" class="primary" disabled>Next &rarr;</button>
+        <button id="generateBtn" type="button" class="primary" hidden>Generate My Museum</button>
+      </div>
+    </section>
+
+    <footer class="foot">Your photos never leave your device &mdash; everything runs locally in your browser.</footer>
+  </main>
+
+  <!-- ============ MUSEUM SCREEN ============ -->
+  <div id="museumScreen" class="screen museum" hidden>
+    <canvas id="scene" tabindex="0" aria-label="3D museum. Use W A S D or arrow keys to walk, mouse to look, Tab or 1-6 to switch characters, and E to view a photo."></canvas>
+
+    <div class="hud-top">
+      <button id="editSetupBtn" type="button" class="hud-btn">&larr; Edit setup</button>
+      <button id="moreBtn" type="button" class="hud-btn">+ Add photos</button>
+      <span id="themeBadge" class="hud-badge"></span>
+      <button id="viewBtn" type="button" class="hud-btn" aria-pressed="false">Camera: 3rd person</button>
+      <button id="emoteBtn" type="button" class="hud-btn" title="Wave / Emote (Q)">Emote</button>
+      <div class="audio-bar">
+        <button id="soundBtn" type="button" class="hud-btn" aria-pressed="true">Sound on</button>
+        <input id="volSlider" type="range" min="0" max="100" value="70" aria-label="Music volume">
+        <button id="nextTrackBtn" type="button" class="hud-btn" title="Next music track">&#9835; Next</button>
+        <button id="hudMusicBtn" type="button" class="hud-btn" title="Add custom music">+ Music</button>
+      </div>
+    </div>
+
+    <div id="charChips" class="char-chips" aria-label="Switch active character"></div>
+    <input id="moreInput" type="file" accept="image/*" multiple hidden>
+
+    <canvas id="minimap" class="minimap" aria-label="Minimap" role="img"></canvas>
+
+    <div id="prompt" class="prompt" hidden></div>
+    <div id="hint" class="hint">WASD / arrows walk &middot; Shift run &middot; Mouse look &middot; E view &middot; Tab / 1-6 switch &middot; Q emote &middot; V camera</div>
+
+    <div class="touch-ui" aria-hidden="false">
+      <div id="joy" class="joy" aria-label="Movement joystick"><div id="joyKnob" class="joy-knob"></div></div>
+      <button id="touchE" type="button" class="touch-btn" aria-label="View nearest photo">View</button>
+      <button id="touchRun" type="button" class="touch-btn small" aria-pressed="false" aria-label="Toggle run">Run</button>
+    </div>
+
+    <div id="welcome" class="welcome" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" hidden>
+      <div class="card-lg">
+        <h2 id="welcomeTitle">Welcome to your museum</h2>
+        <ul class="controls only-desktop">
+          <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrows &mdash; walk</li>
+          <li><kbd>Shift</kbd> &mdash; run</li>
+          <li>Mouse &mdash; look around (click scene to capture, <kbd>Esc</kbd> to release)</li>
+          <li><kbd>E</kbd> &mdash; view the photo in front of you</li>
+          <li><kbd>Tab</kbd> or <kbd>1</kbd>–<kbd>6</kbd> &mdash; switch character</li>
+          <li><kbd>Q</kbd> &mdash; wave / emote &middot; <kbd>V</kbd> &mdash; 1st / 3rd person</li>
+        </ul>
+        <ul class="controls only-touch">
+          <li>Left joystick &mdash; walk</li>
+          <li>Drag the right side of the screen &mdash; look around</li>
+          <li>Tap character chips at the bottom-left to switch</li>
+          <li><b>View</b> button &mdash; open the photo in front of you</li>
+        </ul>
+        <button id="welcomeGo" type="button" class="primary">Start exploring</button>
+      </div>
+    </div>
+
+    <div id="viewer" class="viewer" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
+      <button id="viewerClose" type="button" class="viewer-close" aria-label="Close viewer">&times;</button>
+      <button id="viewerPrev" type="button" class="viewer-nav prev" aria-label="Previous photo">&lsaquo;</button>
+      <figure class="viewer-fig">
+        <img id="viewerImg" alt="">
+        <figcaption><strong id="viewerTitle"></strong><span id="viewerCount"></span></figcaption>
+      </figure>
+      <button id="viewerNext" type="button" class="viewer-nav next" aria-label="Next photo">&rsaquo;</button>
+    </div>
+  </div>
+
+  <div id="loader" class="loader" role="status" aria-live="polite">
+    <div class="loader-inner"><div class="spinner" aria-hidden="true"></div><p id="loaderText">Hanging your photos&hellip;</p></div>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="museum.js"></script>
+</body>
+</html>
