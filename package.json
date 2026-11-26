@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Upload photos and walk through them in a 3D museum.",
   "scripts": {
-    "build": "esbuild src/main.js --bundle --minify --format=iife --target=es2020 --outfile=museum.js",
+    "build": "node -e \"require('esbuild').buildSync({entryPoints:['src/main.js'],bundle:true,minify:true,format:'iife',target:'es2020',outfile:'museum.js'})\"",
     "watch": "esbuild src/main.js --bundle --sourcemap --format=iife --target=es2020 --outfile=museum.js --watch",
     "start": "npx --yes serve ."
   },
